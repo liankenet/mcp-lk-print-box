@@ -905,8 +905,8 @@ def device_setup_prompt(device_id: str = "", device_key: str = "") -> str:
     return f"""
 链科云打印盒设备配置：
 
-1. 设备ID: {device_id or '请从二维码获取'}
-2. 设备密钥: {device_key or '请从二维码获取'}
+1. 设备ID: {device_id or '请从二维码获取,并附带在请求头'}
+2. 设备密钥: {device_key or '请从二维码获取,并附带在请求头'}
 3. API密钥: 请通过请求头 ApiKey 提供
 
 配置步骤：
