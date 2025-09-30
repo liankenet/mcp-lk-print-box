@@ -208,7 +208,7 @@ def submit_print_job(
     kwargs: str,
     device_id: Optional[str] = None,
     device_key: Optional[str] = None,
-    hash_id: Optional[str] = None,
+    printerHash: Optional[str] = None,
     dm_paper_size: str = "9",  # A4
     jp_scale: str = "fit",  # 自适应
     dm_orientation: str = "1",  # 竖向
@@ -223,7 +223,7 @@ def submit_print_job(
         kwargs: 其他打印参数（JSON字符串格式）
         device_id: 设备ID（可选，未提供时使用环境变量）
         device_key: 设备密钥（可选，未提供时使用环境变量）
-        hash_id: 打印机hash_id
+        printerHash: 打印机hash_id，从打印机列表获取，对应变量名称为hash_id
         dm_paper_size: 纸张尺寸（9=A4, 11=A5）
         jp_scale: 自动缩放（fit=自适应, fitw=宽度优先, fith=高度优先, fill=拉伸, cover=铺满, none=关闭）
         dm_orientation: 纸张方向（1=竖向, 2=横向）
@@ -244,9 +244,9 @@ def submit_print_job(
         if not api_key:
             return {"code": 400, "msg": "请求头中缺少 ApiKey"}
 
-        if not hash_id:
-            hash_id = get_default_printer(api_key, device_id, device_key)
-            if not hash_id:
+        if not printerHash:
+            printerHash = get_default_printer(api_key, device_id, device_key)
+            if not printerHash:
                 return {"code": 404, "msg": "打印未连接"}
 
         # 创建客户端
@@ -293,7 +293,7 @@ def submit_print_job(
             job_files = [("jobFile", (filename, io.BytesIO(file_content), mimetype))]
             
             # 提交打印任务
-            result = client.add_job(job_files, hash_id, **job_params)
+            result = client.add_job(job_files, printerHash, **job_params)
             return result
             
         except requests.RequestException as e:
@@ -919,7 +919,7 @@ def device_setup_prompt(device_id: str = "", device_key: str = "") -> str:
 7. 使用create_scan_job工具创建扫描任务
 
 注意事项：
-1. printer_list的hash_id为printerHash
+1. printer_list的hash_id为printerHash，字符串变量
 2. 所有配置信息都通过请求头传递，不再使用环境变量
 """
 
