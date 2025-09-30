@@ -312,16 +312,16 @@ def submit_print_job(
 @mcp.tool()
 def submit_print_job_with_file(
     ctx: Context,
-    file_path: str,
-    printer_hash: Optional[str] = None,
-    kwargs: str = "{}",
-    device_id: Optional[str] = None,
-    device_key: Optional[str] = None,
-    dm_paper_size: str = "9",  # A4
-    jp_scale: str = "fit",  # 自适应
-    dm_orientation: str = "1",  # 竖向
-    dm_copies: str = "1",  # 打印1份
-    dm_color: str = "1"  # 黑白
+    file_path: str = Field(description="本地文件路径（支持相对或绝对路径）"),
+    printer_hash: Optional[str] = Field(description="打印机ID", default=None),
+    kwargs: str = Field(description="其他打印参数（JSON字符串格式）", default="{}"),
+    device_id: Optional[str] = Field(description="设备ID", default=None),
+    device_key: Optional[str] = Field(description="设备密钥", default=None),
+    dm_paper_size: str = Field(description="纸张尺寸（9=A4, 11=A5）", default="9"),
+    jp_scale: str = Field(description="自动缩放（fit=自适应, fitw=宽度优先, fith=高度优先, fill=拉伸, cover=铺满, none=关闭）", default="fit"),
+    dm_orientation: str = Field(description="纸张方向（1=竖向, 2=横向）", default="1"),
+    dm_copies: str = Field(description="打印份数", default="1"),
+    dm_color: str = Field(description="打印颜色（1=黑白, 2=彩色）", default="1")
 ) -> Dict[str, Any]:
     """
     从本地文件提交打印任务（支持从MCP读取文件）
@@ -895,7 +895,14 @@ def print_job_prompt(
 - 打印份数: {copies}
 - 打印颜色: {color}
 
-请确认设备ID和设备密钥已正确配置，然后提交打印任务。
+1.请确认设备ID和设备密钥已正确配置
+2.从打印机列表读取打印机hash_id，对应变量名称为printerHash
+3.读取打印机相关参数get_printer_params
+4.使用get_printer_params的对应参数，提交打印任务。
+
+注意事项：
+1. 优先使用USB打印机打印
+2. 支持彩色打印优先使用彩色打印
 """
 
 
